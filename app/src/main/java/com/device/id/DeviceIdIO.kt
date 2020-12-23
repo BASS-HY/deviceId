@@ -1,6 +1,9 @@
 package com.device.id
 
 import android.content.Context
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import java.io.*
 
 object DeviceIdIO {
@@ -21,8 +24,8 @@ object DeviceIdIO {
             val fis = FileInputStream(file)
             val inputStreamReader = InputStreamReader(fis, "UTF-8")
             val bufferedReader = BufferedReader(inputStreamReader)
-            var i = 0
-            while (i.apply { i = bufferedReader.read() } > 1) {
+            var i: Int
+            while (bufferedReader.read().also { i = it } > -1) {
                 buffer.append(i.toChar())
             }
             bufferedReader.close()
@@ -40,14 +43,16 @@ object DeviceIdIO {
      * @param context
      */
     fun saveDeviceID(str: String?, context: Context) {
-        val file: File = getDevicesDir(context)
-        try {
-            val fos = FileOutputStream(file)
-            val out: Writer = OutputStreamWriter(fos, "UTF-8")
-            out.write(str)
-            out.close()
-        } catch (e: IOException) {
-            Logger.e("存储唯一识别码失败")
+        GlobalScope.launch(Dispatchers.IO) {
+            val file: File = getDevicesDir(context)
+            try {
+                val fos = FileOutputStream(file)
+                val out: Writer = OutputStreamWriter(fos, "UTF-8")
+                out.write(str)
+                out.close()
+            } catch (e: Exception) {
+                Logger.e("存储唯一识别码失败")
+            }
         }
     }
 

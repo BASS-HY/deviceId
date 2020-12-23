@@ -64,9 +64,7 @@ object DeviceIdControl {
          * 此处需要获取网络权限才能获取到MAC地址
          */
         if (!PermissionControl.isHasNetPermission(context)) {
-            Logger.e(
-                "获取网络硬件MAC时,没有网络权限,请先在AndroidManifest.xml中添加 Manifest.permission.INTERNET",
-            )
+            Logger.e("获取网络硬件MAC时,没有网络权限,请先在AndroidManifest.xml中添加 Manifest.permission.INTERNET")
             return ""
         }
 
@@ -79,7 +77,7 @@ object DeviceIdControl {
             if (networkInterface == null) networkInterface = NetworkInterface.getByName("dummy0")
             if (networkInterface == null) networkInterface = NetworkInterface.getByName("bond0")
             if (networkInterface == null) {
-                Logger.d( "获取网络硬件MAC地址失败,无法获取到网络接口")
+                Logger.d("获取网络硬件MAC地址失败,无法获取到网络接口")
                 return ""
             }
 
@@ -102,24 +100,58 @@ object DeviceIdControl {
     fun getIMEI(context: Context): String {
         val tm = context.getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager
         if (!PermissionControl.isHasPhonePermission(context)) {
-            Logger.e( "获取IMEI时,没有phone权限,请先获取到权限")
+            Logger.e("获取IMEI时,没有phone权限,请先获取到权限")
             return ""
         }
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             try {
-                Logger.e( "当前版本大于Android 10,尝试获取IMEI")
+                Logger.e("当前版本大于Android 10,尝试获取IMEI")
                 tm.imei
             } catch (e: Exception) {
                 try {
-                    Logger.e( "获取IMEI失败,没有特殊权限,尝试获取MEID")
+                    Logger.e("获取IMEI失败,没有特殊权限,尝试获取MEID")
                     tm.meid
                 } catch (e: Exception) {
-                    Logger.e( "获取MEID失败,没有特殊权限,尝试获取DEVICE_ID")
+                    Logger.e("获取MEID失败,没有特殊权限,尝试获取DEVICE_ID")
                     tm.deviceId
                 }
             }
         } else
             tm.deviceId
+    }
+
+    /**
+     * 输出所有网络硬件地址
+     */
+    fun getAllNetMac(): String {
+        //Android studio 模拟器将无法获取到
+        val nis: Enumeration<NetworkInterface> =
+            NetworkInterface.getNetworkInterfaces() ?: return ""
+
+        val s: StringBuilder = StringBuilder()
+        while (nis.hasMoreElements()) {
+            val nextElement = nis.nextElement() ?: continue
+            Logger.e("名称： ${nextElement.displayName}")
+            s.append("名称： ${nextElement.displayName}\n")
+
+            Logger.e("名称： ${nextElement.name}\n")
+            s.append("名称： ${nextElement.name}\n")
+
+            Logger.e("硬件地址： ${nextElement.hardwareAddress}\n")
+            s.append("硬件地址： ${nextElement.hardwareAddress}\n")
+
+            if (nextElement.hardwareAddress != null) {
+                val address = nextElement.hardwareAddress
+                val buf = StringBuffer()
+
+                for (b in address) buf.append(String.format("%02X:", b))
+                if (buf.isNotEmpty()) buf.deleteCharAt(buf.length - 1)
+                Logger.e("转化后硬件地址：$buf")
+                s.append("转化后硬件地址：$buf \n")
+            }
+            s.append("-----------------------------------------------")
+        }
+        return s.toString()
     }
 
 }
