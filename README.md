@@ -1,5 +1,5 @@
 # deviceId 快速获取Android 唯一识别码
-[！[]（https://jitpack.io/v/BASS-HY/deviceId.svg）]（https://jitpack.io/#BASS-HY/deviceId）
+[![](https://jitpack.io/v/BASS-HY/deviceId.svg)](https://jitpack.io/#BASS-HY/deviceId)
 
 # CSDN文章地址（更详细的介绍）：https://blog.csdn.net/weixin_45379305/article/details/111477505
 
@@ -13,7 +13,7 @@ allprojects {
 }
 
 dependencies {
-	    implementation 'com.github.BASS-HY:deviceId:v1.1'
+	    implementation 'com.github.BASS-HY:deviceId:v1.3'
 }
 ```
 
