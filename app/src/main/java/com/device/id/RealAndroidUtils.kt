@@ -23,11 +23,16 @@ object RealAndroidUtils {
      *
      *  3.I686 只是i386的一个子集,支持的cpu从Pentium 2 (686)开始,之前的型号不支持.
      */
+//    fun isReal(): Boolean {
+//        val arch: String =
+//            System.getProperties().getProperty("os.arch")?.toUpperCase(Locale.ROOT) ?: return true
+//        return !(TextUtils.equals(arch, "I686") || TextUtils.equals(arch, "I386")
+//                || TextUtils.equals(arch, "I486") || TextUtils.equals(arch, "I586"))
+//    }
     fun isReal(): Boolean {
         val arch: String =
             System.getProperties().getProperty("os.arch")?.toUpperCase(Locale.ROOT) ?: return true
-        return !(TextUtils.equals(arch, "I686") || TextUtils.equals(arch, "I386")
-                || TextUtils.equals(arch, "I486") || TextUtils.equals(arch, "I586"))
+        return TextUtils.equals(arch, "AARCH64") || TextUtils.equals(arch, "AARCH32")
     }
 
 //    /**
